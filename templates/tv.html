@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fictionary Party · TV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Figtree:wght@400;600;800&display=swap">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<style>
+/* 10-foot layout: everything scales with the screen width, inside a 5% TV-safe margin */
+html{font-size:clamp(14px,1.3vw,36px)}
+body{min-height:100vh;padding:4vh 5vw}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:1em;padding-bottom:.8em;border-bottom:1px solid var(--line);margin-bottom:1.4em}
+.top .brand{font-size:2.2rem}
+.top .meta{color:var(--muted);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:.85rem;text-align:right}
+.top .meta b{color:#fff;font-size:1.3em;letter-spacing:.18em}
+.cols{display:grid;grid-template-columns:1.6fr 1fr;gap:2.4rem;align-items:start}
+.cols>*{min-width:0}
+.panel{background:var(--ground-2);border:1px solid var(--line);border-radius:22px;padding:1.4rem;display:flex;flex-direction:column;gap:1rem}
+.big .headword{font-size:clamp(3rem,8vw,7rem)}
+.mid .headword{font-size:3rem}
+.cols.reveal{grid-template-columns:2.3fr 1fr}
+.cols.reveal .headword{font-size:2.4rem}
+.cols.reveal .def .t{font-size:1em}
+.pos{font-size:1.5rem}
+.defs.two{grid-template-columns:1fr 1fr}
+.code{font-family:var(--f-display);font-size:5rem;line-height:1;letter-spacing:.12em;color:var(--accent)}
+.qr{width:10rem;height:10rem;border-radius:14px;background:var(--paper)}
+.url{font-size:1.6rem;font-weight:800}
+.hint{color:var(--muted);font-size:.95rem}
+.landing{max-width:34rem;margin:8vh auto 0;display:flex;flex-direction:column;gap:1.6rem}
+.landing .brand{font-size:5rem}
+.landing input{font-size:1.6rem;letter-spacing:.3em;text-transform:uppercase;text-align:center;max-width:12rem}
+.landing button{font-size:1.2rem;padding:.8em 1.4em}
+.err{color:var(--danger);font-weight:700}
+.winner{font-family:var(--f-display);font-size:5rem;line-height:1;color:var(--accent)}
+.status{font-size:1.15rem}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="{{ url_for('static', filename='socket.io.min.js') }}"></script>
+<script src="{{ url_for('static', filename='common.js') }}"></script>
+<script src="{{ url_for('static', filename='tv.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+/* Fictionary Party: cobalt "living room" ground, paper cards for definitions and phones */
+:root{
+  --ground:#1c2a6b; --ground-2:#14205a; --line:#33438f; --muted:#a9b3e6;
+  --paper:#fbfaf5; --paper-2:#ecebe3; --ink:#1b1d2e; --ink-soft:#5a5e78; --ink-gold:#a5750a;
+  --accent:#ffc23d; --accent-ink:#2a1f00; --real:#45d69b; --real-ink:#062b1c; --danger:#ff7a6b;
+  --f-display:"Rozha One", Georgia, "Times New Roman", serif;
+  --f-def:"Newsreader", Georgia, "Times New Roman", serif;
+  --f-ui:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--ground);color:#fff}
+body{font-family:var(--f-ui);line-height:1.5;-webkit-text-size-adjust:100%}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;margin:0;line-height:1.05;text-wrap:balance}
+p{margin:0}
+.brand{font-family:var(--f-display);line-height:1;letter-spacing:.01em}
+.brand span{color:var(--accent)}
+.label{display:inline-block;font-size:.72em;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.sub{color:var(--muted)}
+.headword{font-family:var(--f-display);line-height:1;word-break:break-word}
+.pos{font-family:var(--f-def);font-style:italic;color:var(--accent)}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.stack{display:flex;flex-direction:column;gap:16px}
+button{font:inherit;font-weight:700;cursor:pointer;border-radius:12px;border:0;padding:12px 18px}
+button:disabled{opacity:.45;cursor:default}
+:focus-visible{outline:4px solid var(--accent);outline-offset:3px}
+.btn{background:var(--accent);color:var(--accent-ink)}
+.ghost{background:transparent;color:var(--muted);border:1.5px solid var(--line)}
+input,textarea,select{font:inherit;color:var(--ink);background:#fff;border:1.5px solid #d6d4c8;border-radius:10px;padding:10px 12px;width:100%}
+textarea{font-family:var(--f-def);font-size:1.15rem;min-height:120px;resize:vertical}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field>span{font-size:.75rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+
+/* definition cards */
+.defs{list-style:none;margin:0;padding:0;display:grid;gap:.6em}
+.def{display:grid;grid-template-columns:2.2em 1fr;gap:.7em;align-items:start;background:var(--paper);color:var(--ink);border-radius:14px;padding:.75em .95em}
+.def .n{font-family:var(--f-display);font-size:1.5em;line-height:1;color:var(--ink-soft)}
+.def .t{font-family:var(--f-def);font-size:1.15em;line-height:1.35;min-width:0;overflow-wrap:anywhere}
+.def .tag{font-family:var(--f-ui);font-size:.62em;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-top:.6em;display:flex;gap:.45em;flex-wrap:wrap;align-items:center;color:var(--ink-soft)}
+.def.real{box-shadow:inset 0 0 0 .2em var(--real)}
+.def.mine{box-shadow:inset 0 0 0 2px var(--ink-gold)}
+.def.hidden{background:transparent;color:var(--muted);border:1.5px dashed var(--line)}
+.def.hidden .n{color:var(--line)}
+.chip{display:inline-block;padding:.2em .7em;border-radius:999px;background:var(--paper-2);color:var(--ink)}
+.chip.real{background:var(--real);color:var(--real-ink)}
+.chip.fake{background:#2a2f52;color:#fff}
+
+/* player chips */
+.people{display:flex;flex-wrap:wrap;gap:.5em}
+.person{display:inline-flex;align-items:center;gap:.4em;padding:.35em .85em;border-radius:999px;border:1.5px solid var(--line);color:#fff;font-weight:600}
+.person.done{background:var(--line)}
+.person.waiting{border-color:var(--accent);color:var(--accent)}
+.person.away{opacity:.45;border-style:dashed}
+.person .star{color:var(--accent);font-size:.85em}
+
+/* scoreboard */
+.board{display:flex;flex-direction:column;gap:.4em}
+.score{display:grid;grid-template-columns:1.4em 1fr auto auto;gap:.7em;align-items:center;padding:.45em .8em;border-radius:10px;background:var(--ground);font-variant-numeric:tabular-nums}
+.score .rk{color:var(--muted);font-weight:800}
+.score .nm{font-weight:600;min-width:0;overflow-wrap:anywhere}
+.score .gain{color:var(--accent);font-weight:800}
+.score .pts{font-family:var(--f-display);font-size:1.35em}
+.score.lead{box-shadow:inset 0 0 0 2px var(--accent)}
+
+@media (prefers-reduced-motion:no-preference){
+  .pop{animation:pop .35s ease-out}
+  @keyframes pop{from{transform:translateY(6px) scale(.98);opacity:.4}to{transform:none;opacity:1}}
+}

@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: fictionary
+    runtime: python
+    plan: starter            # free works too, but it sleeps when idle (30-60s wake-up)
+    buildCommand: pip install -r requirements.txt
+    # ONE worker only: game rooms live in that worker's memory. Threads handle the sockets.
+    startCommand: gunicorn -w 1 --threads 100 --timeout 120 -b 0.0.0.0:$PORT app:app
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: SECRET_KEY
+        generateValue: true
+      # Optional: set to your custom domain, e.g. https://fictionary.plumdesignbuild.com
+      - key: PUBLIC_URL
+        sync: false
