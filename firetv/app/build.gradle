@@ -1,0 +1,48 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.plumdesignbuild.fictionary'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.plumdesignbuild.fictionary'
+        minSdk 22          // Fire OS 5 and newer: every Fire TV stick still in use
+        targetSdk 34
+        // Each GitHub build gets a higher number so a new install updates the old one
+        versionCode Integer.parseInt(System.getenv('VERSION_CODE') ?: '1')
+        versionName "1.0.${System.getenv('VERSION_CODE') ?: '1'}"
+    }
+
+    // One fixed key, so every new build installs as an update over the last one.
+    // Fine for installing on your own TVs; the Amazon Appstore re-signs apps with its own key.
+    signingConfigs {
+        shared {
+            storeFile file('../fictionary.keystore')
+            storePassword 'fictionary'
+            keyAlias 'fictionary'
+            keyPassword 'fictionary'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.shared
+        }
+        debug {
+            signingConfig signingConfigs.shared
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+}

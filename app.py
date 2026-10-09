@@ -11,7 +11,7 @@ import threading
 import time
 
 import segno
-from flask import Flask, Response, abort, render_template, request
+from flask import Flask, Response, abort, redirect, render_template, request
 from flask_socketio import SocketIO, emit, join_room, leave_room
 
 from words import WORDS
@@ -21,6 +21,8 @@ app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY") or secrets.token_hex(16)
 socketio = SocketIO(app, async_mode="threading", ping_interval=20, ping_timeout=40)
 
 PUBLIC_URL = (os.environ.get("PUBLIC_URL") or "").rstrip("/")
+FIRETV_APK_URL = os.environ.get("FIRETV_APK_URL") or \
+    "https://github.com/pauldavidfisher/fictionary/releases/download/firetv-latest/fictionary-firetv.apk"
 CODE_CHARS = "BCDFGHJKLMNPQRSTVWXZ"  # no vowels, so codes never spell words
 MAX_PLAYERS = 10
 MIN_PLAYERS = 3
@@ -406,6 +408,12 @@ def qr(code):
         buf, kind="svg", scale=10, border=2, dark="#1b1d2e", light="#fbfaf5")
     return Response(buf.getvalue(), mimetype="image/svg+xml",
                     headers={"Cache-Control": "public, max-age=3600"})
+
+
+@app.route("/app")
+def firetv_app():
+    """Short address for installing the Fire TV app with the Downloader app."""
+    return redirect(FIRETV_APK_URL, code=302)
 
 
 @app.route("/health")

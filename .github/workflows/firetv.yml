@@ -1,0 +1,55 @@
+# Builds the Fire TV app on GitHub's computers whenever the app's files change,
+# and publishes it as the "Fire TV app (latest)" release.
+# Fire TVs install it with the Downloader app at:  <your game address>/app
+name: Build Fire TV app
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'firetv/**'
+      - '.github/workflows/firetv.yml'
+  workflow_dispatch:   # adds a "Run workflow" button on the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Build the app
+        working-directory: firetv
+        env:
+          VERSION_CODE: ${{ github.run_number }}
+        run: gradle assembleRelease --no-daemon --stacktrace
+
+      - name: Name the app file
+        run: cp firetv/app/build/outputs/apk/release/app-release.apk fictionary-firetv.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fictionary-firetv
+          path: fictionary-firetv.apk
+
+      - name: Publish as the latest Fire TV release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: firetv-latest
+          name: Fire TV app (latest)
+          body: |
+            Fictionary for Fire TV, build ${{ github.run_number }}.
+            On the Fire TV, open the Downloader app and enter your game address followed by /app
+          files: fictionary-firetv.apk
+          make_latest: true

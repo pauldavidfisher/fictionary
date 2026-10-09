@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Fictionary</string>
+    <!-- The TV screen of the game. Change this if the game moves to a new address. -->
+    <string name="game_url">https://fictionary-d6b2.onrender.com/tv</string>
+</resources>

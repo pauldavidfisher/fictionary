@@ -41,11 +41,28 @@ Notes:
 - On the free plan, the first visit after a quiet spell takes 30 to 60 seconds to wake up. The Starter plan stays awake.
 - A game stays open as long as someone has it open (up to a day with no moves) and closes 2 hours after everyone leaves. Any screen still showing a closed game says so.
 
-## Fire TV
+## Fire TV app
 
-**Today, with no app:** on the Fire TV, install **Amazon Silk Browser** from the Appstore, open `YOUR-SITE/tv`, and play. The remote's arrow keys move between the buttons on the TV screen.
+The `firetv/` folder is a small Android app that opens the game's TV screen full-screen on a Fire TV. It keeps the screen awake, works with the remote, and shows a "Try again" screen if the internet drops. Phones still play in their browser.
 
-**Next step:** a real Fire TV app (an Android WebView wrapper that opens `/tv` full-screen, keeps the screen awake and puts an icon on the home screen), submitted to the Amazon Appstore.
+**How it gets built:** you don't need Android Studio. Every push that changes `firetv/` makes GitHub build the app (see the **Actions** tab, about 4 minutes) and publish it as the release **Fire TV app (latest)**. You can also start a build by hand: Actions → Build Fire TV app → Run workflow.
+
+**Installing on a Fire TV** (once per TV):
+1. Turn on developer options: Settings → My Fire TV → About → highlight the device name and press the select button 7 times.
+2. From the Fire TV app store, install **Downloader** (by AFTVnews).
+3. Settings → My Fire TV → Developer options → Install unknown apps → turn on **Downloader**.
+4. Open Downloader and enter `fictionary-d6b2.onrender.com/app`, then choose **Install**, then **Open**.
+5. Fictionary now appears in Your Apps & Channels. Hold the select button on it to move it to the front row.
+
+New builds install the same way and update the existing app.
+
+**The repo must be public** for the Fire TV to download the app (GitHub won't serve release files from a private repo without a login). The game code isn't secret, but if you'd rather keep the repo private, download `fictionary-firetv.apk` from the release on your Mac and host it somewhere public, then set `FIRETV_APK_URL` in Render to that address.
+
+**Other details:**
+- The game address the app opens is in `firetv/app/src/main/res/values/strings.xml`. Change it there if you move to a custom domain.
+- The ☰ button on the remote reloads the game. Back leaves the app.
+- `firetv/fictionary.keystore` signs every build with the same key so updates install over the old app. It's only for your own TVs; the Amazon Appstore re-signs apps with its own key.
+- `firetv/store-assets/` has the icon and banner art in the sizes the Amazon Appstore asks for, if you publish it there later.
 
 ## Adding words
 
