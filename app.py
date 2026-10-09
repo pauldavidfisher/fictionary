@@ -29,6 +29,7 @@ MIN_PLAYERS = 3
 ROOM_TTL = int(os.environ.get("ROOM_TTL", 24 * 3600))
 EMPTY_TTL = int(os.environ.get("EMPTY_TTL", 2 * 3600))
 SWEEP_EVERY = int(os.environ.get("SWEEP_EVERY", 300))
+VIP_GRACE = int(os.environ.get("VIP_GRACE", 60))  # seconds the star waits for its owner to reconnect
 
 LOCK = threading.RLock()
 ROOMS = {}  # code -> Room
@@ -51,6 +52,7 @@ class Room:
         self.players = []  # {"pid", "name", "score", "sid"}
         self.screens = set()
         self.vip = None
+        self.host = None  # who the star belongs to (first to join)
         self.mode = "deck"
         self.rounds = 5
         self.used = set()
@@ -92,20 +94,26 @@ class Room:
         self.gains = {swap(k): v for k, v in self.gains.items()}
         for e in self.entries:
             e["author"] = swap(e["author"])
-        self.vip, self.dasher = swap(self.vip), swap(self.dasher)
+        self.vip, self.dasher, self.host = swap(self.vip), swap(self.dasher), swap(self.host)
 
     def connected(self):
         return [p for p in self.players if p["sid"]]
 
     def ensure_vip(self):
-        vip = self.player(self.vip)
-        if vip and vip["sid"]:
+        """The host keeps the star through short drops and gets it back on return."""
+        host = self.player(self.host)
+        if host and (host["sid"] or time.time() - host.get("left_at", 0) < VIP_GRACE):
+            self.vip = self.host
             return
-        live = self.connected()
-        if live:
-            self.vip = live[0]["pid"]
-        elif not vip:
-            self.vip = self.players[0]["pid"] if self.players else None
+        vip = self.player(self.vip)
+        if not (vip and vip["sid"]):
+            live = self.connected()
+            if live:
+                self.vip = live[0]["pid"]
+            elif not vip:
+                self.vip = self.players[0]["pid"] if self.players else None
+        if not host:  # host left for good: the new star holder becomes host
+            self.host = self.vip
 
     def writers(self):
         return [pid for pid in self.participants
@@ -322,8 +330,22 @@ def detach(sid):
         p = room.player(info["pid"])
         if p and p["sid"] == sid:
             p["sid"] = None
+            p["left_at"] = time.time()
+            socketio.start_background_task(recheck_vip, room.code)
         room.ensure_vip()
     broadcast(room)
+
+
+def recheck_vip(code):
+    """After the grace period, pass the star on if its owner hasn't come back."""
+    socketio.sleep(VIP_GRACE + 1)
+    with LOCK:
+        room = ROOMS.get(code)
+        if room:
+            before = room.vip
+            room.ensure_vip()
+            if room.vip != before:
+                broadcast(room)
 
 
 def attach_phone(room, name, pid):
@@ -448,6 +470,8 @@ def on_leave():
         SIDS.pop(request.sid, None)
         if room and p:
             p["sid"] = None
+            if room.host == p["pid"]:
+                room.host = None  # leaving on purpose hands the star on right away
             if room.phase == "lobby" or room.phase == "final":
                 room.players.remove(p)
             elif p["pid"] in room.participants:
@@ -641,6 +665,7 @@ def on_remove(data):
         if p["pid"] in room.participants:
             room.participants.remove(p["pid"])
             room.maybe_advance()
+        room.ensure_vip()
         broadcast(room)
 
 

@@ -9,7 +9,7 @@ The bluffing dictionary game, played Jackbox-style. Everyone plays on their own 
 
 1. One TV opens `/tv` and picks **Host a new game**. It shows a room code and a QR code.
    (Or someone taps **Start a new game** on their phone. A TV isn't required.)
-2. Players join on their phones from anywhere. The first player to join gets a ★ and **runs the game** (the VIP). The VIP picks the word mode and rounds, then starts.
+2. Players join on their phones from anywhere. The first player to join gets a ★ and **runs the game** (the VIP), so have the person running the game night join first. If their phone drops, the ★ waits a minute for them; after that it passes to another player and comes back when they return. The VIP picks the word mode and rounds, then starts.
 3. **Other houses:** open `/tv` on that house's TV, choose "Show a game that's already running", and enter the same code. Every TV stays in sync. If you're on a video call, one person reads the definitions aloud.
 4. Each round: everyone writes a fake definition on their phone → the TVs list all of them, shuffled with the real one → everyone votes privately → the VIP reveals the bluffs one by one, with the real definition last.
 
@@ -22,7 +22,7 @@ The bluffing dictionary game, played Jackbox-style. Everyone plays on their own 
 ## Run it locally
 
 ```bash
-cd ~/Downloads/local-repos/fictionary-1
+cd ~/Downloads/local-repos/fictionary-3
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 python app.py
