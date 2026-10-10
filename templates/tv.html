@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fictionary Party · TV</title>
+<title>{{ meta.title }}</title>
+{% include '_meta.html' %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Figtree:wght@400;600;800&display=swap">
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">

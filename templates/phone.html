@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1c2a6b">
-<title>Fictionary Party</title>
+<title>{{ meta.title }}</title>
+{% include '_meta.html' %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Figtree:wght@400;600;800&display=swap">
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
@@ -43,7 +44,8 @@ body{font-size:16px;padding:env(safe-area-inset-top,0px) 16px calc(env(safe-area
 .vip .label{color:var(--accent)}
 .vip .ghost{color:#fff}
 .vip button{width:100%}
-.toast{background:var(--danger);color:#2b0700;font-weight:700;border-radius:12px;padding:10px 14px}
+.toast{background:var(--danger);color:#2b0700;font-weight:700;border-radius:12px;padding:10px 14px;overflow-wrap:anywhere}
+.toast.ok{background:var(--real);color:var(--real-ink)}
 .count{font-size:.8rem;color:var(--ink-soft);text-align:right;font-variant-numeric:tabular-nums}
 .quiet{color:var(--muted);font-size:.85rem;text-align:center}
 .quiet button{background:none;border:0;color:var(--muted);text-decoration:underline;padding:4px;font-weight:600}

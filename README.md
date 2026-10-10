@@ -64,6 +64,17 @@ New builds install the same way and update the existing app.
 - `firetv/fictionary.keystore` signs every build with the same key so updates install over the old app. It's only for your own TVs; the Amazon Appstore re-signs apps with its own key.
 - `firetv/store-assets/` has the icon and banner art in the sizes the Amazon Appstore asks for, if you publish it there later.
 
+## Link previews and sharing
+
+Both pages carry Open Graph and X (Twitter) card tags, so a shared link shows the Fictionary picture, title and description in iMessage, WhatsApp, Facebook and Messenger, X, LinkedIn, Slack, Discord and Pinterest. Invite links that include a room code (`/?r=KQZB`) preview as "Join my Fictionary game · Room KQZB".
+
+- Preview image: `static/img/share.jpg` (1200×630). Replace it with any image of that size to change the preview.
+- Title and description text: `SITE_TITLE` and `SITE_DESC` near the routes in `app.py`.
+- Icons for browser tabs and phone home screens are in `static/img/`; `/manifest.webmanifest` lets phones "Add to Home Screen" as a Fictionary app.
+- The **Invite someone** button in the phone lobby opens the phone's share sheet with the room's join link.
+
+To check or refresh a preview after changing it, paste the link into the [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/) (click **Scrape Again**) or the [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/). Most apps remember a link's preview for a while, so an old preview can stick around for a few days elsewhere.
+
 ## Adding words
 
 Edit `words.py`: each row is `("word", "part of speech", "real definition")`. Write definitions in lowercase dictionary style with no ending period, to match how players' bluffs are formatted.

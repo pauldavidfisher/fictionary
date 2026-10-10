@@ -388,14 +388,88 @@ def base_url(data):
 
 # ---- routes -------------------------------------------------------------
 
+SITE_TITLE = "Fictionary Party: the bluffing dictionary game"
+SITE_DESC = ("Write fake definitions for obscure words, fool your friends and find the real one. "
+             "Everyone plays on their phone, and every house can put the game on its own TV.")
+
+
+def site_base():
+    """The public https address, even behind Render's proxy."""
+    if PUBLIC_URL:
+        return PUBLIC_URL
+    proto = request.headers.get("X-Forwarded-Proto", request.scheme).split(",")[0].strip()
+    return f"{proto}://{request.host}"
+
+
+def page_meta(path, title=SITE_TITLE, description=SITE_DESC):
+    base = site_base()
+    return {
+        "base": base, "url": base + path, "title": title, "description": description,
+        "jsonld": {
+            "@context": "https://schema.org", "@type": "WebApplication",
+            "name": "Fictionary Party", "url": base + "/", "image": base + "/static/img/share.jpg",
+            "description": SITE_DESC, "applicationCategory": "GameApplication",
+            "operatingSystem": "Any (web browser), Fire TV", "inLanguage": "en",
+            "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+        },
+    }
+
+
 @app.route("/")
 def phone():
-    return render_template("phone.html")
+    code = "".join(c for c in (request.args.get("r") or "").upper() if c.isalpha())[:4]
+    if len(code) == 4:  # a shared invite link previews as an invite to that game
+        meta = page_meta(f"/?r={code}", title=f"Join my Fictionary game · Room {code}",
+                         description=f"Tap to join room {code} on your phone. Fictionary is the bluffing "
+                                     "dictionary game: write fake definitions, fool your friends, find the real one.")
+    else:
+        meta = page_meta("/")
+    return render_template("phone.html", meta=meta)
 
 
 @app.route("/tv")
 def tv():
-    return render_template("tv.html")
+    return render_template("tv.html", meta=page_meta("/tv", title="Fictionary Party · TV screen",
+        description="Put Fictionary on the big screen. Host a game or show one already running; "
+                    "everyone plays on their phone, from any house."))
+
+
+@app.route("/favicon.ico")
+def favicon():
+    return app.send_static_file("img/favicon.ico")
+
+
+@app.route("/apple-touch-icon.png")
+@app.route("/apple-touch-icon-precomposed.png")
+def apple_icon():
+    return app.send_static_file("img/apple-touch-icon.png")
+
+
+@app.route("/manifest.webmanifest")
+def manifest():
+    return {
+        "name": "Fictionary Party", "short_name": "Fictionary",
+        "description": SITE_DESC, "start_url": "/", "scope": "/", "display": "standalone",
+        "background_color": "#1c2a6b", "theme_color": "#1c2a6b",
+        "icons": [
+            {"src": "/static/img/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+            {"src": "/static/img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"},
+        ],
+    }, 200, {"Content-Type": "application/manifest+json"}
+
+
+@app.route("/robots.txt")
+def robots():
+    return Response(f"User-agent: *\nAllow: /\nDisallow: /qr/\n\nSitemap: {site_base()}/sitemap.xml\n",
+                    mimetype="text/plain")
+
+
+@app.route("/sitemap.xml")
+def sitemap():
+    b = site_base()
+    xml = ('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+           f"<url><loc>{b}/</loc></url><url><loc>{b}/tv</loc></url></urlset>")
+    return Response(xml, mimetype="application/xml")
 
 
 @app.route("/qr/<code>.svg")

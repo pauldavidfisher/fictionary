@@ -37,8 +37,8 @@ sock.on('deck_word', w => { $('dw').value = w.w; $('dp').value = w.pos; $('dd').
 sock.on('disconnect', () => { if (S) { S.offline = true; renderMeta(); } });
 
 let toastTimer;
-function toast(msg) {
-  $('toast').innerHTML = `<div class="toast" role="alert">${esc(msg)}</div>`;
+function toast(msg, ok) {
+  $('toast').innerHTML = `<div class="toast${ok ? ' ok' : ''}" role="${ok ? 'status' : 'alert'}">${esc(msg)}</div>`;
   clearTimeout(toastTimer); toastTimer = setTimeout(() => $('toast').innerHTML = '', 4500);
 }
 
@@ -71,7 +71,8 @@ const views = {
     } else {
       main += `<p class="sub">${esc(S.vipName)} will start the game. ${S.mode === 'deck' ? 'Words come from the deck' : 'Players take turns as dasher'}, ${S.rounds} rounds.</p>`;
     }
-    main += `<p class="sub">Friends somewhere else can join with code <b>${esc(S.code)}</b> at ${esc(S.host)}. To put the game on another TV, open <b>${esc(S.host)}/tv</b> on it.</p>`;
+    main += `<button class="ghost" data-act="invite">Invite someone to room ${esc(S.code)}</button>
+      <p class="sub">Friends somewhere else can join with code <b>${esc(S.code)}</b> at ${esc(S.host)}. To put the game on another TV, open <b>${esc(S.host)}/tv</b> on it.</p>`;
     return { key: `lobby${me.vip}${S.mode}${S.rounds}${n}`, main, status: playersBox(me.vip) };
   },
   dasher() {
@@ -203,6 +204,18 @@ const A = {
   start() { sock.emit('start'); },
   toLobby() { sock.emit('to_lobby'); },
   leave() { sock.emit('leave'); },
+  async invite() {
+    const url = S.joinUrl;
+    const text = `Join my Fictionary game! Room ${S.code}`;
+    try {
+      if (navigator.share) { await navigator.share({ title: 'Fictionary Party', text, url }); return; }
+      await navigator.clipboard.writeText(`${text}: ${url}`);
+      toast('Invite link copied. Paste it into a text or email.', true);
+    } catch (e) {
+      if (e && e.name === 'AbortError') return;   // they closed the share sheet
+      toast(`Share this link: ${url}`, true);
+    }
+  },
   remove(b) { sock.emit('remove', { pid: b.dataset.pid }); },
   dasherDeck() { sock.emit('dasher_deck'); },
   dasherGo() { sock.emit('dasher_word', { w: $('dw').value, pos: $('dp').value, d: $('dd').value }); },
